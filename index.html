@@ -266,7 +266,7 @@ function openExpense(id=null){
   $('expenseModal').classList.add('show');setTimeout(()=>$('fdetail').focus(),50);
 }
 function closeExpense(){$('expenseModal').classList.remove('show');editId=null}
-async async function saveExpense(){
+async function saveExpense(){
   let item={date:$('fdate').value,amount:Number($('famount').value),detail:$('fdetail').value.trim(),type:$('ftype').value,paidvia:$('fpaidvia').value,paidby:$('fpaidby').value};
   if(!item.date||!item.amount||!item.detail||!item.type||!item.paidvia||!item.paidby){alert('Please complete all fields.');return}
   if(editId){const obj=expenses.find(x=>x.id===editId);Object.assign(obj,item);await cloudUpdate(obj)}else{const obj={id:crypto.randomUUID(),...item};expenses.push(obj);await cloudInsert(obj)}
