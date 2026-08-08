@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080b18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pulse">
+<title>Pulse — Cloud Expense Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#070a14;--panel:#101526;--panel2:#151b2e;--line:#26304a;--text:#f8fafc;--muted:#94a3b8;--p:#8b5cf6;--c:#22d3ee;--danger:#fb7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0,#21174d 0,transparent 32%),radial-gradient(circle at 90% 5%,#063544 0,transparent 30%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}.wrap{max-width:1400px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--p),var(--c));display:grid;place-items:center;font-size:22px}.brand h1{margin:0;font-size:22px}.brand small{color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#ffffff08;color:var(--text);border-radius:12px;padding:10px 14px;font-weight:750;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--p),#6366f1);border:0}.btn.danger{color:#fecdd3}.hero,.card{background:#0e1424e8;border:1px solid var(--line);border-radius:22px;box-shadow:0 20px 60px #0005}.hero{padding:25px}.heroGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.eyebrow{font-size:11px;letter-spacing:.14em;color:#c4b5fd;font-weight:900}.hero h2{font-size:38px;letter-spacing:-.05em;margin:9px 0}.hero p{color:var(--muted)}.total{font-size:46px;font-weight:900}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.control,.field input,.field select{background:#070b16;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px;outline:0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:15px 0}.stat{padding:17px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:850}.num{font-size:25px;font-weight:900;margin-top:7px}.layout{display:grid;grid-template-columns:1.3fr .7fr;gap:15px}.card{padding:18px}.card h3{margin:0 0 14px}.chart{height:220px;display:flex;align-items:end;gap:5px}.barcol{height:100%;flex:1;display:flex;align-items:end;position:relative}.bar{width:100%;min-height:2px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#a78bfa,#22d3ee)}.barcol span{position:absolute;bottom:-18px;width:100%;text-align:center;color:#64748b;font-size:9px}.cats{display:grid;gap:12px}.cat{display:grid;grid-template-columns:1fr auto;gap:8px}.line{height:7px;background:#ffffff0a;border-radius:10px;margin-top:6px}.fill{height:100%;background:linear-gradient(90deg,var(--p),var(--c));border-radius:10px}.tableCard{margin-top:15px;padding:0;overflow:hidden}.tableHead{padding:17px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.tableWrap{overflow:auto;max-height:560px}table{border-collapse:collapse;width:100%;min-width:850px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}th{background:#111827;color:#94a3b8;font-size:10px;text-transform:uppercase;position:sticky;top:0}.amount{text-align:right;font-weight:850}.pill{background:#ffffff08;border:1px solid var(--line);border-radius:999px;padding:4px 8px}.rowbtn{border:0;background:#ffffff08;color:#e2e8f0;border-radius:8px;padding:6px 8px;margin-right:4px;cursor:pointer}.rowbtn.del{color:#fda4af}.empty{text-align:center;color:var(--muted);padding:35px}.modal{position:fixed;inset:0;background:#000b;backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:15px;z-index:100}.modal.show{display:flex}.box{width:min(720px,100%);max-height:92vh;overflow:auto;background:#0d1322;border:1px solid var(--line);border-radius:22px;padding:20px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:850}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.templates{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}.tpl{border:1px solid var(--line);border-radius:15px;padding:13px}.tpl h4{margin:0 0 9px}.tplList{max-height:220px;overflow:auto}.tplItem{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #ffffff08;font-size:12px}.tplItem button{border:0;background:none;color:var(--danger);cursor:pointer}.addline{display:flex;gap:7px;margin-top:10px}.addline input{flex:1;min-width:0;background:#070b16;color:white;border:1px solid var(--line);border-radius:9px;padding:9px}.status{font-size:11px;padding:5px 8px;border-radius:999px;background:#ffffff08;color:#cbd5e1}.toast{position:fixed;right:16px;bottom:16px;background:#111827;border:1px solid var(--line);padding:12px 15px;border-radius:12px;display:none;z-index:200}.toast.show{display:block}
+@media(max-width:900px){.heroGrid,.layout{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.templates{grid-template-columns:1fr}}@media(max-width:560px){.wrap{padding:10px}.hero{padding:18px}.hero h2{font-size:30px}.total{font-size:38px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><div class="logo">✦</div><div><h1>Pulse</h1><small>Cloud Expense Tracker</small></div></div>
+ <div class="actions">
+  <span id="syncBadge" class="status">Local mode</span>
+  <button id="cloudBtn" class="btn">☁ Cloud Setup</button>
+  <button id="templatesBtn" class="btn">⚙ Templates</button>
+  <button id="addBtn" class="btn primary">＋ Add expense</button>
+ </div>
+</header>
+
+<section class="hero">
+ <div class="heroGrid">
+  <div><div class="eyebrow">SPENDING OVERVIEW</div><h2>Know where your money goes.</h2><p id="sub">Your expenses are stored securely for your account when cloud sync is enabled.</p></div>
+  <div><div class="label">Total spend</div><div id="total" class="total">₹0</div><div id="txNote" style="color:#86efac">0 transactions</div></div>
+ </div>
+ <div class="filters">
+  <select id="month" class="control"></select>
+  <select id="catFilter" class="control"></select>
+  <select id="payFilter" class="control"></select>
+  <input id="search" class="control" placeholder="Search expenses…">
+  <button id="resetBtn" class="btn">Reset</button>
+ </div>
+</section>
+
+<section class="stats">
+ <div class="card stat"><div class="label">Transactions</div><div id="count" class="num">0</div></div>
+ <div class="card stat"><div class="label">Average</div><div id="avg" class="num">₹0</div></div>
+ <div class="card stat"><div class="label">Largest</div><div id="largest" class="num">₹0</div></div>
+ <div class="card stat"><div class="label">Top category</div><div id="topCat" class="num">—</div></div>
+</section>
+
+<section class="layout">
+ <div class="card"><h3>Daily spending pulse</h3><div id="chart" class="chart"></div></div>
+ <div class="card"><h3>Category breakdown</h3><div id="cats" class="cats"></div></div>
+</section>
+
+<section class="card tableCard">
+ <div class="tableHead"><div><h3 style="margin:0">Expenses</h3><small id="shown" style="color:#94a3b8"></small></div><div class="actions"><button id="importBtn" class="btn">Import</button><button id="exportBtn" class="btn">Export</button><button id="deleteAllBtn" class="btn danger">Delete all</button><input id="fileInput" type="file" accept=".csv" hidden></div></div>
+ <div class="tableWrap"><table><thead><tr><th>Date</th><th>Expense</th><th>Category</th><th>Amount</th><th>Paid via</th><th>Paid by</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+</section>
+</div>
+
+<div id="cloudModal" class="modal"><div class="box">
+ <h2>☁ Cloud Setup</h2><p style="color:#94a3b8">Connect your Pulse account to Supabase. Use the Publishable/anon key only.</p>
+ <div class="form">
+  <div class="field full"><label>Supabase Project URL</label><input id="sbUrl" placeholder="https://xxxxxxxx.supabase.co"></div>
+  <div class="field full"><label>Publishable / anon key</label><input id="sbKey" placeholder="eyJ..."></div>
+ </div>
+ <div class="foot"><button id="cloudCancel" class="btn">Cancel</button><button id="cloudConnect" class="btn primary">Connect</button></div>
+ <hr style="border-color:#26304a;margin:20px 0">
+ <div id="authArea">
+  <h3>Account</h3><div class="form">
+   <div class="field"><label>Email</label><input id="email" type="email"></div>
+   <div class="field"><label>Password</label><input id="password" type="password"></div>
+  </div>
+  <div class="foot"><button id="signUp" class="btn">Create account</button><button id="signIn" class="btn primary">Sign in</button><button id="signOut" class="btn danger">Sign out</button></div>
+  <div id="authMsg" style="color:#94a3b8;margin-top:8px"></div>
+ </div>
+</div></div>
+
+<div id="expenseModal" class="modal"><div class="box">
+ <h2 id="expenseTitle">Add expense</h2>
+ <div class="form">
+  <div class="field"><label>Date</label><input id="fdate" type="date"></div>
+  <div class="field"><label>Amount</label><input id="famount" type="number" step="0.01"></div>
+  <div class="field full"><label>Expense detail</label><input id="fdetail" placeholder="What did you spend on?"></div>
+  <div class="field"><label>Category</label><select id="ftype"></select></div>
+  <div class="field"><label>Paid via</label><select id="fvia"></select></div>
+  <div class="field"><label>Paid by</label><select id="fby"></select></div>
+ </div>
+ <div class="foot"><button id="expenseCancel" class="btn">Cancel</button><button id="expenseSave" class="btn primary">Save expense</button></div>
+</div></div>
+
+<div id="templatesModal" class="modal"><div class="box">
+ <h2>⚙ Template Studio</h2><p style="color:#94a3b8">Templates sync to your account when cloud mode is connected.</p>
+ <div class="templates">
+  <div class="tpl"><h4>Categories</h4><div id="catTpl" class="tplList"></div><div class="addline"><input id="newCat" placeholder="Add category"><button id="addCat" class="btn">＋</button></div></div>
+  <div class="tpl"><h4>Payment methods</h4><div id="payTpl" class="tplList"></div><div class="addline"><input id="newPay" placeholder="Add payment"><button id="addPay" class="btn">＋</button></div></div>
+  <div class="tpl"><h4>Paid by</h4><div id="byTpl" class="tplList"></div><div class="addline"><input id="newBy" placeholder="Add person"><button id="addBy" class="btn">＋</button></div></div>
+ </div>
+ <div class="foot"><button id="templatesClose" class="btn primary">Done</button></div>
+</div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+(() => {
+"use strict";
+
+const $ = id => document.getElementById(id);
+const CFG = "pulse-supabase-config-v4";
+const CACHE = "pulse-expense-cache-v4";
+const TPL = "pulse-templates-v4";
+
+let supabaseClient = null;
+let user = null;
+let expenses = [];
+let editingId = null;
+
+const templates = JSON.parse(localStorage.getItem(TPL) || "null") || {
+ categories:["Milk","Veggies","Groceries","Curd","Fruits","Dosa Batter","Outing","Bike Petrol","Car Petrol","Dental","Cuddalore Home","Vadalur Home","Medicine","EB Bill","Gas Bill","Internet Recharge","Mobile Recharge","Maid Salary","Other","Non Veg","Pit Stop","Office Expense","Office Gifts"],
+ paidvia:["PhonePe","Cash","HDFC Regalia CC","AXIS Select CC","AXIS Indian Oil CC","ICICI Amazon Pay CC","ICICI Rupay CC","Uni Card CC","SBI KIRU CC","IDFC KIRU CC","HDFC KIRU CC","Pluxee Sodexo","Other"],
+ paidby:["Prem","Kiru","Other"]
+};
+
+function esc(v){return String(v ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function money(v){return "₹"+Number(v||0).toLocaleString("en-IN",{maximumFractionDigits:2});}
+function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200);}
+function cache(){localStorage.setItem(CACHE,JSON.stringify(expenses));localStorage.setItem(TPL,JSON.stringify(templates));}
+function cached(){try{return JSON.parse(localStorage.getItem(CACHE)||"[]")}catch{return[]}}
+function cfg(){try{return JSON.parse(localStorage.getItem(CFG)||"null")}catch{return null}}
+
+function setSync(text){$("syncBadge").textContent=text;}
+function openModal(id){$(id).classList.add("show")}
+function closeModal(id){$(id).classList.remove("show")}
+
+function fillFormOptions(){
+ $("ftype").innerHTML=templates.categories.map(x=>`<option>${esc(x)}</option>`).join("");
+ $("fvia").innerHTML=templates.paidvia.map(x=>`<option>${esc(x)}</option>`).join("");
+ $("fby").innerHTML=templates.paidby.map(x=>`<option>${esc(x)}</option>`).join("");
+}
+
+function fillFilters(){
+ const months=[...new Set(expenses.map(x=>x.date.slice(0,7)))].sort().reverse();
+ const oldM=$("month").value,oldC=$("catFilter").value,oldP=$("payFilter").value;
+ $("month").innerHTML='<option value="">All months</option>'+months.map(m=>`<option value="${m}">${new Date(m+"-02").toLocaleDateString("en-IN",{month:"long",year:"numeric"})}</option>`).join("");
+ $("catFilter").innerHTML='<option value="">All categories</option>'+templates.categories.map(x=>`<option>${esc(x)}</option>`).join("");
+ $("payFilter").innerHTML='<option value="">All payment methods</option>'+templates.paidvia.map(x=>`<option>${esc(x)}</option>`).join("");
+ $("month").value=months.includes(oldM)?oldM:"";
+ $("catFilter").value=templates.categories.includes(oldC)?oldC:"";
+ $("payFilter").value=templates.paidvia.includes(oldP)?oldP:"";
+}
+
+function filtered(){
+ const q=$("search").value.toLowerCase().trim(),m=$("month").value,c=$("catFilter").value,p=$("payFilter").value;
+ return expenses.filter(x=>(!m||x.date.startsWith(m))&&(!c||x.type===c)&&(!p||x.paidvia===p)&&(!q||[x.detail,x.type,x.paidvia,x.paidby].join(" ").toLowerCase().includes(q)));
+}
+
+function render(){
+ fillFilters();fillFormOptions();
+ const a=filtered(),total=a.reduce((s,x)=>s+Number(x.amount),0);
+ $("total").textContent=money(total);$("txNote").textContent=`${a.length} transaction${a.length===1?"":"s"}`;$("count").textContent=a.length;$("avg").textContent=money(a.length?total/a.length:0);
+ const max=a.reduce((x,y)=>!x||y.amount>x.amount?y:x,null);$("largest").textContent=money(max?.amount||0);
+ const cm={};a.forEach(x=>cm[x.type]=(cm[x.type]||0)+Number(x.amount));
+ const top=Object.entries(cm).sort((a,b)=>b[1]-a[1])[0];$("topCat").textContent=top?.[0]||"—";
+ renderChart(a);renderCats(cm);renderTable(a);$("shown").textContent=`Showing ${a.length} of ${expenses.length}`;
+}
+
+function renderChart(a){
+ const map={};a.forEach(x=>map[x.date]=(map[x.date]||0)+Number(x.amount));
+ const days=Object.keys(map).sort(),max=Math.max(...days.map(d=>map[d]),1);
+ $("chart").innerHTML=days.length?days.map(d=>`<div class="barcol" title="${esc(d)} ${money(map[d])}"><div class="bar" style="height:${Math.max(2,map[d]/max*100)}%"></div><span>${d.slice(8)}</span></div>`).join(""):'<div class="empty" style="width:100%">No spending data</div>';
+}
+function renderCats(cm){
+ const rows=Object.entries(cm).sort((a,b)=>b[1]-a[1]).slice(0,7),max=rows[0]?.[1]||1;
+ $("cats").innerHTML=rows.length?rows.map(([k,v])=>`<div class="cat"><div>${esc(k)}<div class="line"><div class="fill" style="width:${v/max*100}%"></div></div></div><strong>${money(v)}</strong></div>`).join(""):'<div class="empty">No categories</div>';
+}
+function renderTable(a){
+ const rows=[...a].sort((x,y)=>y.date.localeCompare(x.date));
+ $("tbody").innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.date)}</td><td><strong>${esc(x.detail)}</strong></td><td><span class="pill">${esc(x.type)}</span></td><td class="amount">${money(x.amount)}</td><td>${esc(x.paidvia)}</td><td>${esc(x.paidby)}</td><td><button class="rowbtn" data-edit="${esc(x.id)}">Edit</button><button class="rowbtn del" data-del="${esc(x.id)}">Delete</button></td></tr>`).join(""):'<tr><td colspan="7" class="empty">No expenses found.</td></tr>';
+}
+
+async function ensureClient(){
+ const c=cfg();
+ if(!c?.url||!c?.key){setSync("Local mode");return false}
+ if(!window.supabase){toast("Supabase library did not load");return false}
+ supabaseClient=window.supabase.createClient(c.url,c.key);
+ return true;
+}
+
+async function loadCloud(){
+ if(!supabaseClient||!user)return;
+ const e=await supabaseClient.from("expenses").select("*").eq("user_id",user.id).order("date",{ascending:false});
+ if(e.error){console.error(e.error);toast("Could not load expenses");return}
+ expenses=(e.data||[]).map(x=>({id:x.id,date:x.date,detail:x.detail,type:x.type,amount:Number(x.amount),paidvia:x.paid_via,paidby:x.paid_by}));
+ const t=await supabaseClient.from("expense_templates").select("*").eq("user_id",user.id);
+ if(!t.error&&t.data?.length){
+  templates.categories=t.data.filter(x=>x.kind==="category").map(x=>x.value).sort();
+  templates.paidvia=t.data.filter(x=>x.kind==="paidvia").map(x=>x.value).sort();
+  templates.paidby=t.data.filter(x=>x.kind==="paidby").map(x=>x.value).sort();
+ }
+ cache();render();
+}
+
+async function connect(){
+ const url=$("sbUrl").value.trim(),key=$("sbKey").value.trim();
+ if(!url||!key){$("authMsg").textContent="Enter both Project URL and Publishable/anon key.";return}
+ localStorage.setItem(CFG,JSON.stringify({url,key}));
+ const ok=await ensureClient();
+ if(!ok)return;
+ const s=await supabaseClient.auth.getSession();
+ if(s.error){$("authMsg").textContent=s.error.message;return}
+ user=s.data.session?.user||null;
+ if(user){await loadCloud();setSync("☁ Synced");$("authMsg").textContent="Connected as "+user.email;}
+ else{$("authMsg").textContent="Connection successful. Create an account or sign in.";setSync("☁ Ready");}
+}
+
+async function signUp(){
+ if(!supabaseClient){const ok=await ensureClient();if(!ok){$("authMsg").textContent="Connect Supabase first.";return}}
+ const email=$("email").value.trim(),password=$("password").value;
+ if(!email||password.length<6){$("authMsg").textContent="Enter an email and password of at least 6 characters.";return}
+ const r=await supabaseClient.auth.signUp({email,password});
+ $("authMsg").textContent=r.error?r.error.message:"Account created. If email confirmation is enabled, check your email.";
+}
+async function signIn(){
+ if(!supabaseClient){const ok=await ensureClient();if(!ok){$("authMsg").textContent="Connect Supabase first.";return}}
+ const email=$("email").value.trim(),password=$("password").value;
+ const r=await supabaseClient.auth.signInWithPassword({email,password});
+ if(r.error){$("authMsg").textContent=r.error.message;return}
+ user=r.data.user;await loadCloud();setSync("☁ Synced");$("authMsg").textContent="Signed in as "+user.email;toast("Cloud sync connected");
+}
+async function signOut(){
+ if(supabaseClient)await supabaseClient.auth.signOut();
+ user=null;supabaseClient=null;expenses=cached();setSync("Local mode");render();$("authMsg").textContent="Signed out. Local cache remains on this device.";
+}
+
+async function saveExpense(){
+ const item={date:$("fdate").value,amount:Number($("famount").value),detail:$("fdetail").value.trim(),type:$("ftype").value,paidvia:$("fvia").value,paidby:$("fby").value};
+ if(!item.date||!item.amount||!item.detail||!item.type||!item.paidvia||!item.paidby){alert("Please complete all fields.");return}
+ if(user&&supabaseClient){
+  if(editingId){
+   const r=await supabaseClient.from("expenses").update({date:item.date,detail:item.detail,type:item.type,amount:item.amount,paid_via:item.paidvia,paid_by:item.paidby}).eq("id",editingId).eq("user_id",user.id);
+   if(r.error){alert(r.error.message);return}
+   Object.assign(expenses.find(x=>x.id===editingId),item);
+  }else{
+   const r=await supabaseClient.from("expenses").insert({user_id:user.id,date:item.date,detail:item.detail,type:item.type,amount:item.amount,paid_via:item.paidvia,paid_by:item.paidby}).select().single();
+   if(r.error){alert(r.error.message);return}
+   item.id=r.data.id;expenses.push(item);
+  }
+ }else{
+  if(editingId)Object.assign(expenses.find(x=>x.id===editingId),item);else expenses.push({id:crypto.randomUUID(),...item});
+ }
+ cache();render();closeModal("expenseModal");toast(editingId?"Expense updated":"Expense added");editingId=null;
+}
+
+async function deleteExpense(id){
+ const x=expenses.find(e=>String(e.id)===String(id));if(!x)return;
+ if(!confirm(`Delete ${x.detail} — ${money(x.amount)}?`))return;
+ if(user&&supabaseClient){
+  const r=await supabaseClient.from("expenses").delete().eq("id",id).eq("user_id",user.id);
+  if(r.error){alert(r.error.message);return}
+ }
+ expenses=expenses.filter(e=>String(e.id)!==String(id));cache();render();toast("Expense deleted");
+}
+async function deleteAll(){
+ if(!expenses.length)return;if(!confirm(`Delete all ${expenses.length} expenses? This cannot be undone.`))return;
+ if(user&&supabaseClient){
+  const r=await supabaseClient.from("expenses").delete().eq("user_id",user.id);
+  if(r.error){alert(r.error.message);return}
+ }
+ expenses=[];cache();render();toast("All expenses deleted");
+}
+
+function openExpense(id=null){
+ editingId=id;const x=id?expenses.find(e=>String(e.id)===String(id)):null;
+ $("expenseTitle").textContent=x?"Edit expense":"Add expense";fillFormOptions();
+ $("fdate").value=x?.date||new Date().toISOString().slice(0,10);$("famount").value=x?.amount||"";$("fdetail").value=x?.detail||"";
+ $("ftype").value=x?.type||templates.categories[0]||"";$("fvia").value=x?.paidvia||templates.paidvia[0]||"";$("fby").value=x?.paidby||templates.paidby[0]||"";
+ openModal("expenseModal");
+}
+
+function renderTemplates(){
+ const list=(id,kind)=>{$(id).innerHTML=templates[kind].map(v=>`<div class="tplItem"><span>${esc(v)}</span><button data-remove-kind="${kind}" data-remove-value="${esc(v)}">×</button></div>`).join("")};
+ list("catTpl","categories");list("payTpl","paidvia");list("byTpl","paidby");
+}
+async function addTemplate(kind,inputId){
+ const v=$(inputId).value.trim();if(!v)return;
+ if(templates[kind].some(x=>x.toLowerCase()===v.toLowerCase())){toast("Already exists");return}
+ templates[kind].push(v);templates[kind].sort();$(inputId).value="";
+ if(user&&supabaseClient){
+  const map={categories:"category",paidvia:"paidvia",paidby:"paidby"};
+  const r=await supabaseClient.from("expense_templates").insert({user_id:user.id,kind:map[kind],value:v});
+  if(r.error){templates[kind]=templates[kind].filter(x=>x!==v);alert(r.error.message);return}
+ }
+ cache();renderTemplates();render();toast("Template added");
+}
+async function removeTemplate(kind,value){
+ if(!confirm(`Remove "${value}" from templates?`))return;
+ if(user&&supabaseClient){
+  const map={categories:"category",paidvia:"paidvia",paidby:"paidby"};
+  const r=await supabaseClient.from("expense_templates").delete().eq("user_id",user.id).eq("kind",map[kind]).eq("value",value);
+  if(r.error){alert(r.error.message);return}
+ }
+ templates[kind]=templates[kind].filter(x=>x!==value);cache();renderTemplates();render();toast("Template removed");
+}
+
+function exportCSV(){
+ const clean=v=>String(v??"").replace(/<br\s*\/?>/gi," ").replace(/\r?\n/g," ").replace(/\s+/g," ").trim();
+ const cell=v=>`"${clean(v).replace(/"/g,'""')}"`;
+ const rows=[["Date","Expense Detail","Type of Expense","Amount","Paid via","Paid by"],...expenses.map(x=>[x.date,x.detail,x.type,Number(x.amount).toFixed(2),x.paidvia,x.paidby])];
+ const csv="\uFEFF"+rows.map(r=>r.map(cell).join(",")).join("\r\n")+"\r\n";
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="Pulse_Expenses.csv";a.click();
+}
+
+function importCSV(file){
+ if(!file)return;const reader=new FileReader();
+ reader.onload=async e=>{
+  const lines=e.target.result.split(/\r?\n/).filter(Boolean);
+  const parse=line=>{let a=[],c="",q=false;for(let i=0;i<line.length;i++){let ch=line[i];if(ch==='"'&&line[i+1]==='"'){c+='"';i++}else if(ch==='"')q=!q;else if(ch===","&&!q){a.push(c);c=""}else c+=ch}a.push(c);return a};
+  const rows=lines.slice(1).map(parse).filter(r=>r.length>=6);
+  const imported=rows.map(r=>({id:crypto.randomUUID(),date:r[0].trim(),detail:r[1],type:r[2],amount:Number(r[3]),paidvia:r[4],paidby:r[5]})).filter(x=>x.date&&Number.isFinite(x.amount));
+  if(!imported.length){alert("No valid expense rows found.");return}
+  if(!confirm(`Import ${imported.length} expenses?`))return;
+  if(user&&supabaseClient){
+   for(const x of imported){
+    const r=await supabaseClient.from("expenses").insert({user_id:user.id,date:x.date,detail:x.detail,type:x.type,amount:x.amount,paid_via:x.paidvia,paid_by:x.paidby});
+    if(r.error){alert(r.error.message);return}
+   }
+   await loadCloud();
+  }else{expenses=imported;cache();render()}
+  toast("Import complete");
+ };
+ reader.readAsText(file);
+}
+
+async function boot(){
+ expenses=cached();render();
+ const c=cfg();
+ if(c?.url&&c?.key){
+  const ok=await ensureClient();
+  if(ok){
+   const s=await supabaseClient.auth.getSession();
+   if(!s.error&&s.data.session){user=s.data.session.user;await loadCloud();setSync("☁ Synced")}
+   else setSync("☁ Sign in");
+  }
+ }
+}
+
+$("cloudBtn").addEventListener("click",()=>{const c=cfg();$("sbUrl").value=c?.url||"";$("sbKey").value=c?.key||"";openModal("cloudModal")});
+$("cloudCancel").addEventListener("click",()=>closeModal("cloudModal"));
+$("cloudConnect").addEventListener("click",connect);
+$("signUp").addEventListener("click",signUp);
+$("signIn").addEventListener("click",signIn);
+$("signOut").addEventListener("click",signOut);
+$("addBtn").addEventListener("click",()=>openExpense());
+$("expenseCancel").addEventListener("click",()=>closeModal("expenseModal"));
+$("expenseSave").addEventListener("click",saveExpense);
+$("templatesBtn").addEventListener("click",()=>{renderTemplates();openModal("templatesModal")});
+$("templatesClose").addEventListener("click",()=>closeModal("templatesModal"));
+$("addCat").addEventListener("click",()=>addTemplate("categories","newCat"));
+$("addPay").addEventListener("click",()=>addTemplate("paidvia","newPay"));
+$("addBy").addEventListener("click",()=>addTemplate("paidby","newBy"));
+$("resetBtn").addEventListener("click",()=>{$("month").value="";$("catFilter").value="";$("payFilter").value="";$("search").value="";render()});
+["month","catFilter","payFilter","search"].forEach(id=>$(id).addEventListener("input",render));
+$("deleteAllBtn").addEventListener("click",deleteAll);
+$("exportBtn").addEventListener("click",exportCSV);
+$("importBtn").addEventListener("click",()=>$("fileInput").click());
+$("fileInput").addEventListener("change",e=>importCSV(e.target.files[0]));
+$("tbody").addEventListener("click",e=>{const edit=e.target.dataset.edit;if(edit!==undefined)openExpense(edit);const del=e.target.dataset.del;if(del!==undefined)deleteExpense(del)});
+["catTpl","payTpl","byTpl"].forEach(id=>$(id).addEventListener("click",e=>{const b=e.target.closest("[data-remove-kind]");if(b)removeTemplate(b.dataset.removeKind,b.dataset.removeValue)}));
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal").forEach(m=>m.classList.remove("show"))});
+
+boot();
+})();
+</script>
+</body>
+</html>
